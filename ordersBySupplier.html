@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Pedidos por Fornecedor - Nobre Distribuidora</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    const API_BASE_URL = "69.62.101.81"; // Atualize para o endereço público da sua VPS
+  </script>
+</head>
+<body>
+  <header>
+    <h1>Pedidos por Fornecedor</h1>
+    <button onclick="voltar()">Voltar</button>
+  </header>
+  <div id="orders-by-supplier"></div>
+  <script>
+    function voltar() {
+      window.location.href = "index.html";
+    }
+    async function renderOrdersBySupplier() {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          window.location.href = "login.html";
+          return;
+        }
+        const response = await fetch(`${API_BASE_URL}/api/pedidos/por-fornecedor`, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          }
+        });
+        const grouped = await response.json();
+        let html = "";
+        for (const fornecedor in grouped) {
+          html += `<h2>${fornecedor}</h2>`;
+          grouped[fornecedor].forEach(order => {
+            html += `<div class="concluded-order">
+              <strong>Nome:</strong> ${order.nome}<br>
+              <strong>Valor:</strong> ${order.valor}<br>
+              <strong>Data:</strong> ${new Date(order.data).toLocaleDateString("pt-BR")}
+            </div>`;
+          });
+        }
+        document.getElementById("orders-by-supplier").innerHTML = html;
+      } catch (err) {
+        console.error("Erro ao carregar pedidos por fornecedor:", err);
+      }
+    }
+    renderOrdersBySupplier();
+  </script>
+</body>
+</html>

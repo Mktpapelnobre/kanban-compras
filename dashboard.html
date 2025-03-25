@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel Administrativo - Nobre Distribuidora</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Painel Administrativo</h1>
+    <div class="header-right">
+      <p id="userInfo"></p>
+      <button onclick="logout()">Sair</button>
+    </div>
+    <nav class="tabs">
+      <button class="tablink" onclick="openTab(event, 'tabPedidos')" id="defaultTab">Pedidos</button>
+      <button class="tablink" onclick="openTab(event, 'tabUsuarios')">Usuários</button>
+      <button class="tablink" onclick="openTab(event, 'tabLogs')">Logs</button>
+      <button class="tablink" onclick="openTab(event, 'tabBackup')">Backup &amp; Monitoramento</button>
+    </nav>
+  </header>
+
+  <main>
+    <div id="tabPedidos" class="tabcontent">
+      <section class="cards-container">
+        <div class="card">
+          <h3>Total Pedidos Abertos</h3>
+          <p id="totalOrders">0</p>
+        </div>
+        <div class="card">
+          <h3>Valor Total dos Pedidos</h3>
+          <p id="totalValue">R$ 0,00</p>
+        </div>
+        <div class="card">
+          <h3>Pedidos Atrasados</h3>
+          <p id="overdueOrders">0</p>
+        </div>
+      </section>
+
+      <section class="charts-container">
+        <div class="chart-box">
+          <h3>Pedidos Diários (Últimos 7 dias)</h3>
+          <canvas id="dailyChart"></canvas>
+        </div>
+        <div class="chart-box">
+          <h3>Pedidos Semanais (Últimas 4 semanas)</h3>
+          <canvas id="weeklyChart"></canvas>
+        </div>
+        <div class="chart-box">
+          <h3>Pedidos Mensais (Últimos 12 meses)</h3>
+          <canvas id="monthlyChart"></canvas>
+        </div>
+      </section>
+
+      <section class="report-section">
+        <h2>Relatório de Pedidos Abertos</h2>
+        <table id="ordersTable">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Valor</th>
+              <th>Data de Entrega</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </div>
+
+    <div id="tabUsuarios" class="tabcontent">
+      <h2>Gerenciamento de Usuários</h2>
+      <div id="usersTable"></div>
+      <h3>Cadastrar Novo Usuário</h3>
+      <form id="userForm" onsubmit="event.preventDefault(); addUser();">
+        <input type="text" id="newUsername" placeholder="Usuário" required>
+        <input type="password" id="newPassword" placeholder="Senha" required>
+        <select id="newRole">
+          <option value="comprador">Comprador</option>
+          <option value="estoque">Estoque</option>
+          <option value="compras">Compras</option>
+          <option value="admin">Admin</option>
+        </select>
+        <button type="submit">Cadastrar</button>
+      </form>
+    </div>
+
+    <div id="tabLogs" class="tabcontent">
+      <h2>Logs do Sistema</h2>
+      <div id="logsContainer"></div>
+      <button onclick="loadLogs()">Atualizar Logs</button>
+    </div>
+
+    <div id="tabBackup" class="tabcontent">
+      <h2>Backup e Monitoramento</h2>
+      <button onclick="realizarBackup()">Realizar Backup Agora</button>
+      <div id="backupStatus"></div>
+      <h3>Saúde do Sistema</h3>
+      <div class="health-section">
+        <p>Uso de CPU (Load Average 1 min): <span id="cpuUsage">-</span></p>
+        <p>Uso de Memória (%): <span id="memoryUsage">-</span>%</p>
+      </div>
+      <button onclick="loadHealthMetrics()">Atualizar Métricas</button>
+    </div>
+  </main>
+
+  <script>
+    function exibirUsuarioLogado() {
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      if (currentUser) {
+        const userInfoEl = document.getElementById("userInfo");
+        if (userInfoEl) {
+          userInfoEl.textContent = `Logado como: ${currentUser.username}`;
+        }
+      }
+    }
+  </script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Pedidos Concluídos - Nobre Distribuidora</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    const API_BASE_URL = "69.62.101.81"; // Atualize para o endereço público da sua VPS
+  </script>
+</head>
+<body>
+  <header>
+    <h1>Pedidos Concluídos</h1>
+    <button onclick="voltar()">Voltar</button>
+  </header>
+  <div id="concluded-container"></div>
+  <script>
+    function voltar() {
+      window.location.href = "index.html";
+    }
+    async function renderConcluded() {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          window.location.href = "login.html";
+          return;
+        }
+        const response = await fetch(`${API_BASE_URL}/api/pedidos/concluidos`, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          }
+        });
+        const pedidos = await response.json();
+        const container = document.getElementById("concluded-container");
+        if (pedidos.length === 0) {
+          container.innerHTML = "<p>Nenhum pedido concluído.</p>";
+        } else {
+          pedidos.forEach(order => {
+            const fornecedorName = (order.fornecedor && order.fornecedor.nome) ? order.fornecedor.nome : (order.fornecedor || "Sem Fornecedor");
+            const div = document.createElement("div");
+            div.className = "concluded-order";
+            div.innerHTML = `
+              <strong>Fornecedor:</strong> ${fornecedorName}<br>
+              <strong>Nome:</strong> ${order.nome}<br>
+              <strong>Valor:</strong> ${order.valor}<br>
+              <strong>Data:</strong> ${new Date(order.data).toLocaleDateString("pt-BR")}
+            `;
+            container.appendChild(div);
+          });
+        }
+      } catch (err) {
+        console.error("Erro ao carregar pedidos concluídos:", err);
+      }
+    }
+    renderConcluded();
+  </script>
+</body>
+</html>

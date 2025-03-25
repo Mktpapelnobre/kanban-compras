@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Kanban de Pedidos - Nobre Distribuidora</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    if (!localStorage.getItem("token")) {
+      window.location.href = "login.html";
+    }
+  </script>
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="Logo" class="logo">
+    <div class="header-right">
+      <p id="userInfo"></p>
+      <div id="notificationIcon" onclick="openNotificationModal()">
+        <img src="bell-icon.png" alt="Notificações">
+        <span class="badge" id="notificationBadge">0</span>
+      </div>
+      <button onclick="openChangePasswordModal()">Alterar Senha</button>
+      <button onclick="logout()">Sair</button>
+    </div>
+  </header>
+
+  <div id="actions"></div>
+
+  <!-- Board Comprador -->
+  <section class="kanban-board" id="board_comprador">
+    <h2>Comprador</h2>
+    <div class="kanban">
+      <div class="kanban-column" id="inicio">
+        <h3 class="stage-title" data-stage="inicio">Início de Pedido</h3>
+        <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+      </div>
+      <div class="kanban-column" id="aprovacao">
+        <h3 class="stage-title" data-stage="aprovacao">Aguardando Aprovação</h3>
+        <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+      </div>
+      <div class="kanban-column" id="revisao">
+        <h3 class="stage-title" data-stage="revisao">Revisão</h3>
+        <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Board Estoque -->
+  <section class="kanban-board" id="board_estoque">
+    <h2>Estoque</h2>
+    <div class="kanban">
+      <div class="kanban-column" id="receber">
+        <h3 class="stage-title" data-stage="receber">Recebimento de Mercadoria</h3>
+        <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+      </div>
+      <div class="kanban-column" id="conferir">
+        <h3 class="stage-title" data-stage="conferir">Conferência de Mercadoria</h3>
+        <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Board Compras -->
+  <section class="kanban-board" id="board_compras">
+    <h2>Compras</h2>
+    <div class="kanban">
+      <div class="kanban-column" id="entrada">
+        <h3 class="stage-title" data-stage="entrada">Entrada de Mercadorias</h3>
+        <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Board Estoque Final -->
+  <section class="kanban-board" id="board_estoqueFinal">
+    <h2>Estoque Final</h2>
+    <div class="kanban">
+      <div class="kanban-column" id="envio">
+        <h3 class="stage-title" data-stage="envio">Envio para o Comercial</h3>
+        <div class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal de Notificações -->
+  <div id="notificationModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeNotificationModal()">&times;</span>
+      <h2>Notificações</h2>
+      <div id="notificationList"></div>
+    </div>
+  </div>
+
+  <!-- Modal de Novo Pedido -->
+  <div id="orderModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeOrderModal()">&times;</span>
+      <h2>Novo Pedido</h2>
+      <input type="text" id="orderNome" placeholder="Nome do Pedido">
+      <input type="text" id="orderValor" placeholder="Valor do Pedido (opcional)">
+      <input type="text" id="orderData" placeholder="Data de Entrega (dd/mm/aaaa) - opcional">
+      <select id="orderFornecedor"></select>
+      <button onclick="criarNovoPedido()">Criar Pedido</button>
+    </div>
+  </div>
+
+  <!-- Modal de Edição de Pedido -->
+  <div id="editOrderModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeEditOrderModal()">&times;</span>
+      <h2>Editar Pedido</h2>
+      <input type="text" id="editOrderNome">
+      <input type="text" id="editOrderValor">
+      <input type="text" id="editOrderData">
+      <select id="editOrderFornecedor"></select>
+      <button onclick="salvarPedidoEditado()">Salvar Alterações</button>
+    </div>
+  </div>
+
+  <!-- Modal de Cadastro de Fornecedor -->
+  <div id="supplierModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeSupplierModal()">&times;</span>
+      <h2>Cadastrar Fornecedor</h2>
+      <input type="text" id="supplierNome" placeholder="Nome do Fornecedor">
+      <input type="text" id="supplierWhats" placeholder="WhatsApp (opcional)">
+      <input type="text" id="supplierRep" placeholder="Representante (opcional)">
+      <button onclick="cadastrarFornecedor()">Cadastrar Fornecedor</button>
+    </div>
+  </div>
+
+  <!-- Modal de Edição de Etapas (Admin) -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeEditModal()">&times;</span>
+      <h2>Editar Nomes das Etapas</h2>
+      <div id="editModalBody"></div>
+      <button onclick="saveEditedSteps()">Salvar Etapas</button>
+    </div>
+  </div>
+
+  <!-- Modal de Cadastro de Novo Usuário (Admin) -->
+  <div id="userModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeUserModal()">&times;</span>
+      <h2>Cadastrar Novo Usuário</h2>
+      <input type="text" id="modalUsername" placeholder="Usuário">
+      <input type="password" id="modalPassword" placeholder="Senha">
+      <select id="modalRole">
+        <option value="comprador">Comprador</option>
+        <option value="estoque">Estoque</option>
+        <option value="compras">Compras</option>
+        <option value="admin">Admin</option>
+      </select>
+      <button onclick="adminRegister()">Cadastrar Usuário</button>
+    </div>
+  </div>
+
+  <!-- Modal de Alterar Senha -->
+  <div id="changePasswordModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeChangePasswordModal()">&times;</span>
+      <h2>Alterar Senha</h2>
+      <input type="password" id="oldPassword" placeholder="Senha Atual">
+      <input type="password" id="newPassword" placeholder="Nova Senha">
+      <input type="password" id="confirmNewPassword" placeholder="Confirmar Nova Senha">
+      <button onclick="changePassword()">Alterar</button>
+    </div>
+  </div>
+
+  <!-- Modal de Gerenciamento de Usuários (Admin) -->
+  <div id="manageUsersModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeManageUsersModal()">&times;</span>
+      <h2>Gerenciar Usuários</h2>
+      <div id="usersTable"></div>
+    </div>
+  </div>
+
+  <!-- Botões Extras -->
+  <div id="viewConcluded">
+    <button onclick="window.location.href='concluded.html'">Ver Concluídos</button>
+    <button onclick="window.location.href='ordersBySupplier.html'">Pedidos por Fornecedor</button>
+    <button onclick="toggleDarkMode()">Dark Mode</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Nobre Distribuidora</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="Logo da Nobre Distribuidora" class="logo">
+  </header>
+  <h2>Faça Login</h2>
+  <div class="login-container">
+    <input type="text" id="username" placeholder="Usuário">
+    <input type="password" id="password" placeholder="Senha">
+    <button onclick="fazerLogin()">Entrar</button>
+  </div>
+
+  <script>
+    const API_BASE_URL = "69.62.101.81"; // Atualize para o endereço público da sua VPS
+    function fazerLogin() {
+      const username = document.getElementById("username").value.toLowerCase().trim();
+      const password = document.getElementById("password").value;
+      fetch(`${API_BASE_URL}/api/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      })
+      .then(res => {
+        if (!res.ok) {
+          alert("Usuário ou senha incorretos!");
+          throw new Error("Credenciais inválidas");
+        }
+        return res.json();
+      })
+      .then(data => {
+        localStorage.setItem("token", data.token);
+        const payload = JSON.parse(atob(data.token.split('.')[1]));
+        localStorage.setItem("currentUser", JSON.stringify({
+          username: payload.username,
+          role: payload.role,
+          password: password
+        }));
+        window.location.href = "index.html";
+      })
+      .catch(err => console.error(err));
+    }
+  </script>
+</body>
+</html>

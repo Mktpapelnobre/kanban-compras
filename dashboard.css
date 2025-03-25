@@ -1,0 +1,139 @@
+/* dashboard.css */
+
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
+  color: #333;
+}
+
+/* Header e Navegação */
+header {
+  background-color: #2F4F35;
+  color: #fff;
+  padding: 1rem;
+  text-align: center;
+  position: relative;
+}
+
+.header-right {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+}
+
+.header-right button {
+  background-color: #fff;
+  color: #2F4F35;
+  border: none;
+  padding: 0.5rem 1rem;
+  margin-left: 0.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+nav.tabs {
+  margin-top: 1rem;
+}
+
+nav.tabs button {
+  background-color: #fff;
+  border: none;
+  padding: 0.75rem 1rem;
+  margin: 0 0.25rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #2F4F35;
+}
+
+nav.tabs button:hover, nav.tabs button.active {
+  background-color: #2F4F35;
+  color: #fff;
+}
+
+/* Tab content */
+.tabcontent {
+  display: none;
+  padding: 1rem;
+}
+
+/* Cards e gráficos do dashboard de pedidos */
+.cards, .charts {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.card, .chart-container {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 1rem;
+  flex: 1;
+  min-width: 200px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.chart-container {
+  min-width: 300px;
+  height: 300px;
+}
+
+/* Tabela do relatório de pedidos */
+.report table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-top: 1rem;
+}
+
+.report th, .report td {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.report th {
+  background-color: #2F4F35;
+  color: #fff;
+}
+
+/* Seção de Saúde do Sistema */
+.health p {
+  margin: 0.5rem 0;
+}
+
+/* Formulário de usuário */
+#userForm {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+#userForm input, #userForm select {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+/* Estilo para o container de logs */
+#logsContainer {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  height: 300px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
